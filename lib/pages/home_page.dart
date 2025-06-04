@@ -11,7 +11,7 @@ class Recipe {
   final String steps;
   final String imageUrl;
   final String categoryId;
-  final String cookingTime;
+  final int cookingTime;
   final int portions;
   final String createdAt;
   final String categoryName;
@@ -37,7 +37,7 @@ class Recipe {
       steps: json['steps'] ?? '',
       imageUrl: json['image_url'] ?? '',
       categoryId: json['category_id'] ?? '',
-      cookingTime: json['cooking_time']?.toString() ?? '0',
+      cookingTime: json['cooking_time'] ?? 0,
       portions: json['portions'] ?? 0, // Diperbaiki dari portionsd ke portions
       createdAt: json['created_at'] ?? '',
       categoryName: json['category_name'] ?? '',
