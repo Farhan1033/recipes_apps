@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recipes_apps/pages/CategoryPage.dart';
+import 'package:recipes_apps/pages/home_page.dart';
 
 class Wrapper extends StatefulWidget {
   const Wrapper({super.key});
@@ -9,16 +9,13 @@ class Wrapper extends StatefulWidget {
 }
 
 class _WrapperState extends State<Wrapper> {
-  List bodyPage = [CategoryPage()];
+  List bodyPage = [HomePage()];
   int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: _bottomNavigationBar(),
-      appBar: AppBar(
-        title: const Text('Wrapper Example'),
-      ),
       body: bodyPage[_currentIndex],
     );
   }
