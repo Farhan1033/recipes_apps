@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:recipes_apps/pages/add_ingredient_page.dart';
+import 'package:recipes_apps/pages/add_recipe_ingredient_page.dart';
 import 'package:recipes_apps/pages/home_page.dart';
 
 class Wrapper extends StatefulWidget {
@@ -9,7 +11,11 @@ class Wrapper extends StatefulWidget {
 }
 
 class _WrapperState extends State<Wrapper> {
-  List bodyPage = [HomePage()];
+  List bodyPage = [
+    HomePage(),
+    AddIngredientPage(),
+    AddRecipeIngredientsPage()
+  ];
   int _currentIndex = 0;
 
   @override
@@ -26,6 +32,10 @@ class _WrapperState extends State<Wrapper> {
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
           label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.add_circle_outline),
+          label: 'Add Ingredient',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),
