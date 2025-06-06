@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:recipes_apps/pages/recipe_ingredients/delete_recipe_ingredient_page.dart';
-import 'package:recipes_apps/pages/recipe_ingredients/edit_recipe_ingredient_page.dart';
 import 'package:recipes_apps/pages/recipes/add_recipe_page.dart';
+import 'package:recipes_apps/pages/recipes/delete_recipe_page.dart';
+import 'package:recipes_apps/pages/recipes/edit_recipe_page.dart';
 
 class RecipePage extends StatelessWidget {
   const RecipePage({super.key});
@@ -39,19 +39,17 @@ class RecipePage extends StatelessWidget {
                               MaterialPageRoute(
                                 builder: (context) => AddRecipePage(),
                               ));
-                        } else if (item == "Edit Recipe Ingredient") {
+                        } else if (item == "Ubah Resep") {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    const EditRecipeIngredientPage(),
-                              ));
-                        } else if (item == "Delete Recipe Ingredient") {
+                                  builder: (context) =>
+                                      const EditRecipePage()));
+                        } else if (item == "Hapus Resep") {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    const DeleteRecipeIngredientPage(),
+                                builder: (context) => const DeleteRecipePage(),
                               ));
                         }
                       },

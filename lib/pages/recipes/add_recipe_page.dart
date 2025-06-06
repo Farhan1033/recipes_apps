@@ -177,7 +177,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
                   SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     value: selectedCategoryId,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Pilih Kategori',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
