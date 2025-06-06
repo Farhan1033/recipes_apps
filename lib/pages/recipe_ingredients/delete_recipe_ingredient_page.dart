@@ -31,8 +31,7 @@ class _DeleteRecipeIngredientPageState
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
-        ingredientsData =
-            data['recipeIngredients'] ?? data; // sesuaikan response
+        ingredientsData = data['recipeIngredients'] ?? data;
         isLoading = false;
       });
     } else {
@@ -76,6 +75,24 @@ class _DeleteRecipeIngredientPageState
 
   @override
   Widget build(BuildContext context) {
+    final seenTitles = <String>{};
+
+    final dropdownItems = ingredientsData.where((item) {
+      final title = item['recipe_title'] ?? 'Unknown';
+      if (seenTitles.contains(title)) {
+        return false;
+      } else {
+        seenTitles.add(title);
+        return true;
+      }
+    }).map<DropdownMenuItem<String>>((item) {
+      final ingredientName = item['recipe_title'] ?? 'Unknown';
+      return DropdownMenuItem<String>(
+        value: item['recipe_id'],
+        child: Text(ingredientName),
+      );
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hapus Recipe Ingredient'),
@@ -90,17 +107,8 @@ class _DeleteRecipeIngredientPageState
                   DropdownButtonFormField<String>(
                     value: selectedId,
                     decoration: const InputDecoration(
-                        labelText: 'Pilih Ingredient untuk dihapus'),
-                    items: ingredientsData.map((item) {
-                      final ingredientName = item['ingredient_name'] ??
-                          item['ingredient']?['name'] ??
-                          'Unnamed';
-                      return DropdownMenuItem<String>(
-                        value: item['id'],
-                        child: Text(
-                            '$ingredientName (Qty: ${item['quantity']} ${item['unit']})'),
-                      );
-                    }).toList(),
+                        labelText: 'Pilih Recipe Ingredient untuk dihapus'),
+                    items: dropdownItems,
                     onChanged: (value) {
                       setState(() {
                         selectedId = value;

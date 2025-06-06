@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:recipes_apps/pages/add_ingredient_page.dart';
-import 'package:recipes_apps/pages/add_recipe_ingredient_page.dart';
 import 'package:recipes_apps/pages/home_page.dart';
+import 'package:recipes_apps/pages/recipe_ingredients/recipe_ingredient_page.dart';
+import 'package:recipes_apps/pages/recipes/recipe_page.dart';
+import 'package:recipes_apps/pages/settings_page.dart';
 
 class Wrapper extends StatefulWidget {
   const Wrapper({super.key});
@@ -13,8 +14,9 @@ class Wrapper extends StatefulWidget {
 class _WrapperState extends State<Wrapper> {
   List bodyPage = [
     HomePage(),
-    AddIngredientPage(),
-    AddRecipeIngredientsPage()
+    RecipeIngredientPage(),
+    RecipePage(),
+    SettingsPage()
   ];
   int _currentIndex = 0;
 
@@ -28,14 +30,20 @@ class _WrapperState extends State<Wrapper> {
 
   BottomNavigationBar _bottomNavigationBar() {
     return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor: Colors.orange[600],
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.add_circle_outline),
-          label: 'Add Ingredient',
+          icon: Icon(Icons.post_add_outlined),
+          label: 'Recipes',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.fastfood_outlined),
+          label: 'Foods',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),

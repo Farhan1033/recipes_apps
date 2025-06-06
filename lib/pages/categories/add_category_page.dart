@@ -4,24 +4,24 @@ import 'dart:convert';
 
 import 'package:recipes_apps/config/base_url.dart';
 
-class AddIngredientPage extends StatefulWidget {
+class AddCategoryPage extends StatefulWidget {
   @override
-  _AddIngredientPageState createState() => _AddIngredientPageState();
+  _AddCategoryPageState createState() => _AddCategoryPageState();
 }
 
-class _AddIngredientPageState extends State<AddIngredientPage> {
+class _AddCategoryPageState extends State<AddCategoryPage> {
   final TextEditingController _nameController = TextEditingController();
   bool _isLoading = false;
 
-  Future<void> _addIngredient() async {
+  Future<void> _addCategory() async {
     if (_nameController.text.trim().isEmpty) {
-      _showSnackbar('Nama tidak boleh kosong', isError: true);
+      _showSnackbar('Nama kategori tidak boleh kosong', isError: true);
       return;
     }
 
     setState(() => _isLoading = true);
 
-    final url = Uri.parse('${baseUrl}/ingredient/create-ingredient');
+    final url = Uri.parse('${baseUrl}/category/create-category');
 
     try {
       final response = await http.post(
@@ -33,7 +33,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
       final data = jsonDecode(response.body);
       if (response.statusCode == 200) {
         _showSnackbar(
-            '✅ ${data["message"]}\n🆔 ${data["ingredient"]["id"]}\n📦 ${data["ingredient"]["name"]}');
+            '✅ ${data["message"]}');
         _nameController.clear();
       } else {
         _showSnackbar('❌ Gagal: ${data["message"] ?? "Terjadi kesalahan"}',
@@ -64,10 +64,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
     return Scaffold(
       backgroundColor: Color(0xFFFDF6F0),
       appBar: AppBar(
-        title: const Text(
-          'Tambah Bahan',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: Text('Tambah Kategori'),
         centerTitle: true,
         elevation: 2,
         backgroundColor: orangeDark,
@@ -84,7 +81,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Masukkan Nama Bahan',
+                  'Masukkan Nama Kategori',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 16),
@@ -95,7 +92,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    prefixIcon: Icon(Icons.label_outline),
+                    prefixIcon: Icon(Icons.category_outlined),
                   ),
                 ),
                 SizedBox(height: 24),
@@ -103,7 +100,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                   width: double.infinity,
                   height: 48,
                   child: ElevatedButton.icon(
-                    onPressed: _isLoading ? null : _addIngredient,
+                    onPressed: _isLoading ? null : _addCategory,
                     icon: Icon(Icons.add),
                     label: _isLoading
                         ? SizedBox(
@@ -114,7 +111,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                               color: Colors.white,
                             ),
                           )
-                        : Text('Tambah Bahan'),
+                        : Text('Tambah Kategori'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: orangeLight,
                       foregroundColor: Colors.white,

@@ -16,6 +16,8 @@ class _EditRecipeIngredientPageState extends State<EditRecipeIngredientPage> {
   List<dynamic> ingredientsData = [];
   bool isLoading = true;
   String? selectedId;
+  String? selectedRecipeId;
+  String? selectedIngredientId;
   double? quantity;
   String? unit;
 
@@ -52,7 +54,9 @@ class _EditRecipeIngredientPageState extends State<EditRecipeIngredientPage> {
 
   void onSelectIngredient(dynamic ingredient) {
     setState(() {
-      selectedId = ingredient['id'] as String;
+      selectedId = ingredient['id'];
+      selectedRecipeId = ingredient['recipe_id'];
+      selectedIngredientId = ingredient['ingredient_id'];
       final q = ingredient['quantity'];
       if (q is int) {
         quantity = q.toDouble();
@@ -72,8 +76,11 @@ class _EditRecipeIngredientPageState extends State<EditRecipeIngredientPage> {
     if (_formKey.currentState!.validate() && selectedId != null) {
       final url = Uri.parse('$baseUrl/recipe-ingredient/$selectedId');
       final body = json.encode({
+        'recipe_id': selectedRecipeId,
+        'ingredient_id': selectedIngredientId,
         'quantity': double.parse(_quantityController.text),
         'unit': unit,
+        'id': selectedId,
       });
 
       final response = await http.put(
@@ -113,22 +120,20 @@ class _EditRecipeIngredientPageState extends State<EditRecipeIngredientPage> {
                   DropdownButtonFormField<String>(
                     value: selectedId,
                     decoration:
-                        const InputDecoration(labelText: 'Pilih Ingredient'),
+                        const InputDecoration(labelText: 'Pilih Makanan'),
                     items:
                         ingredientsData.map<DropdownMenuItem<String>>((item) {
-                      final ingredientName = item['ingredient_name'] ??
-                          item['ingredient']?['name'] ??
-                          'Unnamed';
+                      final ingredientName = item['recipe_title'] ?? 'Unnamed';
                       return DropdownMenuItem<String>(
-                        value: item['id'] as String,
+                        value: item['id'],
                         child: Text(
-                            '$ingredientName (Qty: ${item['quantity']} ${item['unit']})'),
+                            '$ingredientName (${item['ingredient_name'] ?? 'Unknown'})'),
                       );
                     }).toList(),
                     onChanged: (value) {
                       if (value == null) return;
-                      final selected =
-                          ingredientsData.firstWhere((e) => e['id'] == value);
+                      final selected = ingredientsData
+                          .firstWhere((e) => e['id'] == value);
                       onSelectIngredient(selected);
                     },
                   ),
@@ -144,10 +149,12 @@ class _EditRecipeIngredientPageState extends State<EditRecipeIngredientPage> {
                           keyboardType: const TextInputType.numberWithOptions(
                               decimal: true),
                           validator: (value) {
-                            if (value == null || value.isEmpty)
+                            if (value == null || value.isEmpty) {
                               return 'Quantity harus diisi';
-                            if (double.tryParse(value) == null)
+                            }
+                            if (double.tryParse(value) == null) {
                               return 'Quantity harus angka';
+                            }
                             return null;
                           },
                         ),
