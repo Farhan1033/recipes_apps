@@ -21,7 +21,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
 
     setState(() => _isLoading = true);
 
-    final url = Uri.parse('${baseUrl}/ingredient/create-ingredient');
+    final url = Uri.parse('${baseUrl}/ingredient/create');
 
     try {
       final response = await http.post(
@@ -31,9 +31,8 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
       );
 
       final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        _showSnackbar(
-            '✅ ${data["message"]}');
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        _showSnackbar('✅ ${data["message"]}');
         _nameController.clear();
       } else {
         _showSnackbar('❌ Gagal: ${data["message"] ?? "Terjadi kesalahan"}',

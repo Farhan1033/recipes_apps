@@ -8,12 +8,10 @@ class DeleteRecipePage extends StatefulWidget {
   const DeleteRecipePage({super.key});
 
   @override
-  State<DeleteRecipePage> createState() =>
-      _DeleteRecipePageState();
+  State<DeleteRecipePage> createState() => _DeleteRecipePageState();
 }
 
-class _DeleteRecipePageState
-    extends State<DeleteRecipePage> {
+class _DeleteRecipePageState extends State<DeleteRecipePage> {
   List<dynamic> recipeData = [];
   bool isLoading = true;
   String? selectedId;
@@ -25,14 +23,18 @@ class _DeleteRecipePageState
   }
 
   Future<void> fetchIngredients() async {
-    final url = Uri.parse('${baseUrl}/recipes/');
+    final url = Uri.parse('$baseUrl/recipes/');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
-        recipeData = data['recipes'] ?? data;
+        recipeData = data['data'] ?? data;
         isLoading = false;
+        // Reset selectedId jika tidak ditemukan lagi dalam data
+        if (!recipeData.any((item) => item['id'] == selectedId)) {
+          selectedId = null;
+        }
       });
     } else {
       setState(() {
@@ -44,54 +46,48 @@ class _DeleteRecipePageState
     }
   }
 
-  Future<void> deleteIngredient() async {
+  Future<void> deleteRecipe() async {
     if (selectedId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pilih Resep dulu')),
+        const SnackBar(content: Text('Pilih resep dulu')),
       );
       return;
     }
 
-    final url =
-        Uri.parse('${baseUrl}/recipes/delete-recipe');
+    final url = Uri.parse('$baseUrl/recipes/delete/$selectedId');
     final response = await http.delete(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: json.encode({'id': selectedId}),
     );
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Berhasil menghapus data')));
-      await fetchIngredients();
+        const SnackBar(content: Text('Berhasil menghapus data')),
+      );
       setState(() {
-        selectedId = null;
+        selectedId = null; // Kosongkan dulu sebelum refresh data
+        isLoading = true;
       });
+      await fetchIngredients();
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Gagal menghapus data')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Gagal menghapus data')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final seenTitles = <String>{};
-
-    final dropdownItems = recipeData.where((item) {
-      final title = item['title'] ?? 'Unknown';
-      if (seenTitles.contains(title)) {
-        return false;
-      } else {
-        seenTitles.add(title);
-        return true;
-      }
-    }).map<DropdownMenuItem<String>>((item) {
-      final ingredientName = item['title'] ?? 'Unknown';
-      return DropdownMenuItem<String>(
-        value: item['id'],
-        child: Text(ingredientName),
-      );
-    }).toList();
+    final dropdownItems = recipeData
+        .map<DropdownMenuItem<String>>((item) {
+          final recipeTitle = item['title'] ?? 'Tanpa Judul';
+          return DropdownMenuItem<String>(
+            value: item['id'],
+            child: Text(recipeTitle),
+          );
+        })
+        .toSet()
+        .toList(); // pastikan tidak ada duplikat
 
     return Scaffold(
       appBar: AppBar(
@@ -105,9 +101,12 @@ class _DeleteRecipePageState
               child: Column(
                 children: [
                   DropdownButtonFormField<String>(
-                    value: selectedId,
+                    value: recipeData.any((item) => item['id'] == selectedId)
+                        ? selectedId
+                        : null,
                     decoration: const InputDecoration(
                         labelText: 'Pilih Resep untuk dihapus'),
+                    hint: const Text('Pilih resep'),
                     items: dropdownItems,
                     onChanged: (value) {
                       setState(() {
@@ -119,7 +118,7 @@ class _DeleteRecipePageState
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orange[400]),
-                    onPressed: deleteIngredient,
+                    onPressed: deleteRecipe,
                     child: const Text('Hapus'),
                   ),
                 ],

@@ -14,7 +14,7 @@ class Wrapper extends StatefulWidget {
 class _WrapperState extends State<Wrapper> {
   List bodyPage = [
     HomePage(),
-    RecipeIngredientPage(),
+    AddRecipeIngredientsPage(),
     RecipePage(),
     SettingsPage()
   ];

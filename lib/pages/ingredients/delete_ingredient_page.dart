@@ -32,7 +32,7 @@ class _DeleteIngredientPageState extends State<DeleteIngredientPage> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
-          ingredeient = data['ingredient'] ?? data;
+          ingredeient = data['data'] ?? data;
           _isLoading = false;
         });
       } else {
@@ -46,12 +46,11 @@ class _DeleteIngredientPageState extends State<DeleteIngredientPage> {
   Future<void> deleteCategory() async {
     setState(() => _isLoading = true);
 
-    final url = Uri.parse('$baseUrl/ingredient/delete-ingredient');
+    final url = Uri.parse('$baseUrl/ingredient/delete/$selectedIngredientId');
     try {
       final response = await http.delete(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'id': selectedIngredientId}),
       );
 
       if (response.statusCode == 200) {

@@ -41,9 +41,9 @@ class _EditRecipePageState extends State<EditRecipePage> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        if (data is Map && data['recipes'] != null) {
+        if (data is Map && data['data'] != null) {
           setState(() {
-            recipes = List.from(data['recipes']);
+            recipes = List.from(data['data']);
           });
         } else {
           throw Exception('Format data resep tidak valid');
@@ -73,10 +73,10 @@ class _EditRecipePageState extends State<EditRecipePage> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        if (data is! Map || data['recipe'] == null) {
+        if (data is! Map || data['data'] == null) {
           throw Exception('Format data resep tidak valid');
         }
-        final datas = data['recipe'];
+        final datas = data['data'];
         setState(() {
           titleController.text = datas['title']?.toString() ?? '';
           descriptionController.text = datas['description']?.toString() ?? '';
@@ -84,7 +84,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
           imageUrlController.text = datas['image_url']?.toString() ?? '';
           categoryIdController.text = datas['category_id']?.toString() ?? '';
           cookingTimeController.text = datas['cooking_time']?.toString() ?? '0';
-          portionsController.text = datas['portions']?.toString() ?? '0';
+          portionsController.text = datas['portion']?.toString() ?? '0';
 
           // Set selected category name based on category_id
           if (datas['category_id'] != null) {
@@ -120,9 +120,9 @@ class _EditRecipePageState extends State<EditRecipePage> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        if (data is Map && data['category'] != null) {
+        if (data is Map && data['data'] != null) {
           setState(() {
-            categories = List.from(data['category']);
+            categories = List.from(data['data']);
           });
         } else {
           throw Exception('Format data kategori tidak valid');
@@ -151,7 +151,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
 
     try {
       int cookingTime = 0;
-      int portions = 0;
+      int portion = 0;
 
       // Parse cooking time dengan validasi
       String cookingTimeText = cookingTimeController.text.trim();
@@ -162,10 +162,10 @@ class _EditRecipePageState extends State<EditRecipePage> {
       // Parse portions dengan validasi
       String portionsText = portionsController.text.trim();
       if (portionsText.isNotEmpty) {
-        portions = int.tryParse(portionsText) ?? 0;
+        portion = int.tryParse(portionsText) ?? 0;
       }
 
-      final url = Uri.parse('$baseUrl/recipes/$selectedRecipeId');
+      final url = Uri.parse('$baseUrl/recipes/update/$selectedRecipeId');
       final requestData = {
         "title": titleController.text.trim(),
         "description": descriptionController.text.trim(),
@@ -173,7 +173,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
         "image_url": imageUrlController.text.trim(),
         "category_id": categoryIdController.text.trim(),
         "cooking_time": cookingTime,
-        "portions": portions,
+        "portion": portion,
       };
 
       final body = jsonEncode(requestData);
@@ -186,7 +186,6 @@ class _EditRecipePageState extends State<EditRecipePage> {
         },
         body: body,
       );
-
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(

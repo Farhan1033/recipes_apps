@@ -5,77 +5,71 @@ import 'package:recipes_apps/config/base_url.dart';
 
 class Ingredient {
   final String id;
-  final String recipeId;
-  final String ingredientId;
-  final String quantity;
+  final String name;
+  final int quantity;
   final String unit;
-  final String ingredientName;
 
   Ingredient({
     required this.id,
-    required this.recipeId,
-    required this.ingredientId,
+    required this.name,
     required this.quantity,
     required this.unit,
-    required this.ingredientName,
   });
 
   factory Ingredient.fromJson(Map<String, dynamic> json) {
     return Ingredient(
-      id: json['id'],
-      recipeId: json['recipe_id'],
-      ingredientId: json['ingredient_id'],
-      quantity: json['quantity'],
-      unit: json['unit'],
-      ingredientName: json['ingredient_name'],
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      quantity: json['quantity'] ?? 0,
+      unit: json['unit'] ?? '',
     );
   }
 }
 
 class RecipeDetail {
   final String id;
+  final String recipeId;
   final String title;
+  final String category;
+  final int cookingTime;
+  final int portion;
   final String description;
   final String steps;
   final String imageUrl;
-  final String categoryId;
-  final int cookingTime;
-  final int portions;
   final String createdAt;
-  final String categoryName;
   final List<Ingredient> ingredients;
 
   RecipeDetail({
     required this.id,
+    required this.recipeId,
     required this.title,
+    required this.category,
+    required this.cookingTime,
+    required this.portion,
     required this.description,
     required this.steps,
     required this.imageUrl,
-    required this.categoryId,
-    required this.cookingTime,
-    required this.portions,
     required this.createdAt,
-    required this.categoryName,
     required this.ingredients,
   });
 
   factory RecipeDetail.fromJson(Map<String, dynamic> json) {
-    var ingredientsList = json['ingredients'] as List;
+    var ingredientsList = json['ingredients'] as List? ?? [];
     List<Ingredient> ingredients = ingredientsList
         .map((ingredient) => Ingredient.fromJson(ingredient))
         .toList();
 
     return RecipeDetail(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      steps: json['steps'],
-      imageUrl: json['image_url'],
-      categoryId: json['category_id'],
+      id: json['id'] ?? '',
+      recipeId: json['recipe_id'] ?? '',
+      title: json['title'] ?? '',
+      category: json['category'] ?? '',
       cookingTime: json['cooking_time'] ?? 0,
-      portions: json['portions'] ?? 0,
-      createdAt: json['created_at'],
-      categoryName: json['category_name'],
+      portion: json['portion'] ?? 0,
+      description: json['description'] ?? '',
+      steps: json['steps'] ?? '',
+      imageUrl: json['image_url'] ?? '',
+      createdAt: json['created_at'] ?? '',
       ingredients: ingredients,
     );
   }
@@ -135,17 +129,17 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
       });
 
       final response = await http.get(
-        Uri.parse('$baseUrl/recipes/${widget.recipeId}'),
+        Uri.parse('$baseUrl/recipe-ingredient/${widget.recipeId}'),
         headers: {
           'Content-Type': 'application/json',
         },
       );
 
       if (response.statusCode == 200) {
-        Map<String, dynamic> data = json.decode(response.body);
+        var data = json.decode(response.body);
 
         setState(() {
-          recipe = RecipeDetail.fromJson(data['recipe']);
+          recipe = RecipeDetail.fromJson(data);
           isLoading = false;
         });
 
@@ -161,6 +155,8 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
       setState(() {
         errorMessage = 'Terjadi kesalahan: $e';
         isLoading = false;
+        print(e);
+        print(widget.recipeId);
       });
     }
   }
@@ -334,7 +330,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
                                                     BorderRadius.circular(20),
                                               ),
                                               child: Text(
-                                                recipe?.categoryName ?? '',
+                                                recipe?.category ?? '',
                                                 style: TextStyle(
                                                   color: Colors.orange[800],
                                                   fontSize: 14,
@@ -395,7 +391,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
                                                 size: 24),
                                             SizedBox(height: 4),
                                             Text(
-                                              '${recipe?.portions} porsi',
+                                              '${recipe?.portion} porsi',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w600,
                                                 color: Colors.grey[800],
@@ -500,8 +496,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
                                                     SizedBox(width: 12),
                                                     Expanded(
                                                       child: Text(
-                                                        ingredient
-                                                            .ingredientName,
+                                                        ingredient.name,
                                                         style: TextStyle(
                                                           fontSize: 16,
                                                           color:

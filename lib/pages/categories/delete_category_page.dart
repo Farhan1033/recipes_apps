@@ -26,12 +26,13 @@ class _DeleteCategoryPageState extends State<DeleteCategoryPage> {
 
     final url = Uri.parse('$baseUrl/category/');
     try {
-      final response = await http.get(url, headers: {'Content-Type': 'application/json'});
+      final response =
+          await http.get(url, headers: {'Content-Type': 'application/json'});
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
-          categories = data['category'] ?? data;
+          categories = data['data'] ?? data;
           _isLoading = false;
         });
       } else {
@@ -45,12 +46,11 @@ class _DeleteCategoryPageState extends State<DeleteCategoryPage> {
   Future<void> deleteCategory() async {
     setState(() => _isLoading = true);
 
-    final url = Uri.parse('$baseUrl/category/delete-category');
+    final url = Uri.parse('$baseUrl/category/delete/${selectedCategoryId}');
     try {
       final response = await http.delete(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'id': selectedCategoryId}),
       );
 
       if (response.statusCode == 200) {
@@ -70,7 +70,8 @@ class _DeleteCategoryPageState extends State<DeleteCategoryPage> {
 
   void _showMessage(String message) {
     setState(() => _isLoading = false);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _confirmDelete() {
@@ -119,7 +120,8 @@ class _DeleteCategoryPageState extends State<DeleteCategoryPage> {
           : Center(
               child: Card(
                 margin: const EdgeInsets.all(20),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
                 elevation: 8,
                 child: Padding(
                   padding: const EdgeInsets.all(20),
@@ -130,7 +132,8 @@ class _DeleteCategoryPageState extends State<DeleteCategoryPage> {
                           children: [
                             const Text(
                               'Hapus Kategori',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 16),
                             DropdownButtonFormField<String>(
@@ -138,10 +141,12 @@ class _DeleteCategoryPageState extends State<DeleteCategoryPage> {
                               decoration: const InputDecoration(
                                 labelText: 'Pilih Kategori',
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
                                 ),
                               ),
-                              items: categories.map<DropdownMenuItem<String>>((item) {
+                              items: categories
+                                  .map<DropdownMenuItem<String>>((item) {
                                 final name = item['name'] ?? 'Unnamed';
                                 return DropdownMenuItem<String>(
                                   value: item['id'],

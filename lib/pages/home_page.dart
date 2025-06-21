@@ -38,9 +38,9 @@ class Recipe {
       imageUrl: json['image_url'] ?? '',
       categoryId: json['category_id'] ?? '',
       cookingTime: json['cooking_time'] ?? 0,
-      portions: json['portions'] ?? 0, // Diperbaiki dari portionsd ke portions
+      portions: json['portion'] ?? 0,
       createdAt: json['created_at'] ?? '',
-      categoryName: json['category_name'] ?? '',
+      categoryName: json['category'] ?? '',
     );
   }
 }
@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        final List<dynamic> recipeList = data['recipes'] ?? [];
+        final List<dynamic> recipeList = data['data'] ?? [];
 
         setState(() {
           recipes = recipeList.map((json) => Recipe.fromJson(json)).toList();

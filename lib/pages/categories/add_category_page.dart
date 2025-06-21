@@ -21,7 +21,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
 
     setState(() => _isLoading = true);
 
-    final url = Uri.parse('${baseUrl}/category/create-category');
+    final url = Uri.parse('${baseUrl}/category/create');
 
     try {
       final response = await http.post(
@@ -31,9 +31,8 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
       );
 
       final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        _showSnackbar(
-            '✅ ${data["message"]}');
+      if (response.statusCode == 201) {
+        _showSnackbar('✅ ${data["message"]}');
         _nameController.clear();
       } else {
         _showSnackbar('❌ Gagal: ${data["message"] ?? "Terjadi kesalahan"}',

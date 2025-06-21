@@ -30,9 +30,9 @@ class _AddRecipePageState extends State<AddRecipePage> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        if (data is Map && data['category'] != null) {
+        if (data is Map && data['data'] != null) {
           setState(() {
-            categories = List.from(data['category']);
+            categories = List.from(data['data']);
           });
         } else {
           throw Exception('Format data kategori tidak valid');
@@ -58,7 +58,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
 
       setState(() => isLoading = true);
 
-      final url = Uri.parse('${baseUrl}/recipes/create-recipe');
+      final url = Uri.parse('${baseUrl}/recipes/create');
 
       final body = jsonEncode({
         "title": titleController.text,
@@ -67,7 +67,7 @@ class _AddRecipePageState extends State<AddRecipePage> {
         "image_url": imageUrlController.text,
         "category_id": selectedCategoryId,
         "cooking_time": int.tryParse(cookingTimeController.text) ?? 0,
-        "portions": int.tryParse(portionsController.text) ?? 0,
+        "portion": int.tryParse(portionsController.text) ?? 0,
       });
 
       try {

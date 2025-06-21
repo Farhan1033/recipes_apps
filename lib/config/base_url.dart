@@ -1,1 +1,2 @@
-const String baseUrl = 'http://192.168.233.145:5000/api';
+const String baseUrl =
+    'https://backend-recipes-app-farhanfadillah1562-dio1a4zq.leapcell.dev/api';
