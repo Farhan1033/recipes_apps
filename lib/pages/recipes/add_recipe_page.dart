@@ -1,6 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:recipes_apps/config/base_url.dart';
 
@@ -29,7 +33,6 @@ class _AddRecipePageState extends State<AddRecipePage> {
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
         if (data is Map && data['data'] != null) {
           setState(() {
             categories = List.from(data['data']);
@@ -43,6 +46,35 @@ class _AddRecipePageState extends State<AddRecipePage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error mengambil kategori: $e')),
+      );
+    }
+  }
+
+  Future<void> uploadImageToFirebase() async {
+    final result = await FilePicker.platform.pickFiles(type: FileType.image);
+    if (result == null) return;
+
+    final path = result.files.single.path!;
+    final file = File(path);
+    final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    try {
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('recipes/$fileName-${result.files.single.name}');
+      final uploadTask = await ref.putFile(file);
+      final downloadUrl = await uploadTask.ref.getDownloadURL();
+
+      setState(() {
+        imageUrlController.text = downloadUrl;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gambar berhasil diupload')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal upload gambar: $e')),
       );
     }
   }
@@ -169,12 +201,33 @@ class _AddRecipePageState extends State<AddRecipePage> {
                     validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
                   ),
                   SizedBox(height: 16),
-                  TextFormField(
-                    controller: imageUrlController,
-                    decoration: buildInputDecoration('URL Gambar'),
-                    validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
+
+                  /// 📸 Upload Gambar Section
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: imageUrlController,
+                          decoration:
+                              buildInputDecoration('URL Gambar (hasil upload)'),
+                          readOnly: true,
+                          validator: (value) =>
+                              value!.isEmpty ? 'Wajib upload gambar' : null,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      ElevatedButton.icon(
+                        onPressed: uploadImageToFirebase,
+                        icon: Icon(Icons.upload),
+                        label: Text("Upload"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange[300],
+                        ),
+                      )
+                    ],
                   ),
                   SizedBox(height: 16),
+
                   DropdownButtonFormField<String>(
                     value: selectedCategoryId,
                     decoration: const InputDecoration(

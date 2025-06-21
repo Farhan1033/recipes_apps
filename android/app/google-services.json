@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "904147034026",
+    "project_id": "cuci-mobil-d1b27",
+    "storage_bucket": "cuci-mobil-d1b27.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:904147034026:android:c53727372ebc73136ed5d3",
+        "android_client_info": {
+          "package_name": "com.example.recipes_apps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4GiNySOX2LzMPmLF7MA39KTCj8HzW-Hg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

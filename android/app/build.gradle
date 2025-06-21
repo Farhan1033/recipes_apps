@@ -1,14 +1,24 @@
 plugins {
     id "com.android.application"
+    id 'com.google.gms.google-services'
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+dependencies {
+  // Import the Firebase BoM
+  implementation platform('com.google.firebase:firebase-bom:33.15.0')
+
+  // TODO: Add the dependencies for Firebase products you want to use
+  // When using the BoM, don't specify versions in Firebase dependencies
+  // https://firebase.google.com/docs/android/setup#available-libraries
+}
+
 android {
     namespace = "com.example.recipes_apps"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    compileSdk = 35
+    ndkVersion = "25.1.8937393"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -24,10 +34,10 @@ android {
         applicationId = "com.example.recipes_apps"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        minSdkVersion 21
+        targetSdkVersion 35
+        versionCode flutter.versionCode.toInteger()
+        versionName flutter.versionName
     }
 
     buildTypes {
